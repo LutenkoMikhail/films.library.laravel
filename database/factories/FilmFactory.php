@@ -19,7 +19,7 @@ class FilmFactory extends Factory
     {
         return [
             'name' => ucfirst($this->faker->words(4, true)),
-            'poster' => $this->faker->image(Storage::path('img')),
+            'poster' => $this->faker->placeImg('img'),
             'published' => $this->faker->randomElement([false, true]),
         ];
     }
