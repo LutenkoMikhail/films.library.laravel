@@ -45,7 +45,7 @@ class Genre extends Model
         Genre::$paginate = $paginate;
         $genres = Genre::orderBy('id')->paginate(Genre::$paginate);
         if (count($genres) === 0) {
-            Genre::$statusCode = 404;
+            Genre::$statusCode = Response::HTTP_NOT_FOUND;
         }
 
         return $genres;
@@ -59,7 +59,7 @@ class Genre extends Model
     {
         Film::$paginate = $paginate;
         if (!$genre->films->isNotEmpty()) {
-            Genre::$statusCode = 404;
+            Genre::$statusCode = Response::HTTP_NOT_FOUND;;
         }
 
         return new GenreFilmsResourse ($genre);
@@ -74,7 +74,7 @@ class Genre extends Model
     {
         $genre->name = $request->name;
         if (!$genre->save()) {
-            Genre::$statusCode = 404;
+            Genre::$statusCode = Response::HTTP_NOT_FOUND;;
         }
 
         return new GenreFilmsResourse ($genre);
@@ -93,6 +93,7 @@ class Genre extends Model
         if (!$genre->save()) {
             Genre::$statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
         }
+
         return new GenreFilmsResourse ($genre);
     }
 

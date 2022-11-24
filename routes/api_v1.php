@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/v1/genres', GenreController::class);
 Route::apiResource('/v1/films', FilmController::class);
-
+Route::post('/v1/films/{film}/publish', [FilmController::class, 'publish']);
 
 Route::fallback(function () {
     return response()->json([Config::get('constants.json.not_found')], 404);

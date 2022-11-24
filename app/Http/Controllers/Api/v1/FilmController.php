@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\api\v1\StoreFilmRequest;
 use App\Http\Requests\api\v1\UpdateFilmRequest;
+use App\Http\Resources\api\v1\FilmCollection;
 use App\Models\Film;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class FilmController extends Controller
 {
@@ -17,7 +19,10 @@ class FilmController extends Controller
      */
     public function index()
     {
-        //
+        return (new FilmCollection
+        (Film::allFilms(Config::get('constants.db.paginate_films.paginate_film_3'))))
+            ->response()
+            ->setStatusCode(Film::$statusCode);
     }
 
 
@@ -40,7 +45,9 @@ class FilmController extends Controller
      */
     public function show(Film $film)
     {
-        //
+        return Film::oneFilm( $film)
+            ->response()
+            ->setStatusCode(Film::$statusCode);
     }
 
 
@@ -64,6 +71,11 @@ class FilmController extends Controller
      */
     public function destroy(Film $film)
     {
-        //
+        return Film::destroyFilm($film);
+    }
+
+    public function publish(Film $film)
+    {
+        return Film::publishFilm($film);
     }
 }

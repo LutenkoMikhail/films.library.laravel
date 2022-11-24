@@ -6,6 +6,9 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class FilmCollection extends ResourceCollection
 {
+
+    public static $wrap = 'Films';
+
     /**
      * Transform the resource collection into an array.
      *
