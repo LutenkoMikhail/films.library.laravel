@@ -55,8 +55,9 @@ class Genre extends Model
      * @param Genre $genre
      * @return GenreFilmsResourse
      */
-    static public function allFilmsInGenre(Genre $genre)
+    static public function allFilmsInGenre(Genre $genre, $paginate)
     {
+        Film::$paginate = $paginate;
         if (!$genre->films->isNotEmpty()) {
             Genre::$statusCode = 404;
         }
@@ -101,10 +102,14 @@ class Genre extends Model
      */
     static public function destroyGenre(Genre $genre)
     {
-        if ($genre->delete() > 0) {
-            return response()->json(['message' => 'Successfully Deleted']);
-        } else {
-            return response()->json(['message' => 'Delete Failed']);
+        $message = 'Delete Failed';
+
+        if ($genre->films()->count() === 0) {
+            if ($genre->delete() > 0) {
+                $message = 'Successfully Deleted';
+            }
         }
+
+        return response()->json(['message' => $message]);
     }
 }

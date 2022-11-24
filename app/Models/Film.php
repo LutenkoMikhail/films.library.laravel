@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Http\Traits\ModelPaginateTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        ModelPaginateTrait;
 
     /**
      * The attributes that are mass assignable.

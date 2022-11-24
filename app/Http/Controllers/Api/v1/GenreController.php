@@ -8,6 +8,7 @@ use App\Http\Requests\api\v1\UpdateGenreRequest;
 use App\Http\Resources\api\v1\GenreCollection;
 use App\Http\Resources\api\v1\GenreFilmsResourse;
 use App\Http\Resources\api\v1\GenreResource;
+use App\Models\Film;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -49,7 +50,8 @@ class GenreController extends Controller
      */
     public function show(Genre $genre)
     {
-        return Genre::allFilmsInGenre($genre)->response()
+        return Genre::allFilmsInGenre($genre, Config::get('constants.db.paginate_films.paginate_film_25'))
+            ->response()
             ->setStatusCode(Genre::$statusCode);
 
     }
@@ -64,7 +66,7 @@ class GenreController extends Controller
      */
     public function update(UpdateGenreRequest $request, Genre $genre)
     {
-        return Genre::updateGenre($request,$genre)->response()
+        return Genre::updateGenre($request, $genre)->response()
             ->setStatusCode(Genre::$statusCode);
     }
 

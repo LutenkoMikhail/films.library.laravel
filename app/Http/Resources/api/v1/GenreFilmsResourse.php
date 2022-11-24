@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\api\v1;
 
+use App\Models\Film;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Config;
 
@@ -20,7 +21,8 @@ class GenreFilmsResourse extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            Config::get('constants.json.films') => $this->when($this->films->isNotEmpty(), FilmResource::collection($this->films)),
+            Config::get('constants.json.films') => $this->when($this->films->isNotEmpty(),
+                collect(FilmResource::collection($this->films))->paginate(Film::$paginate)),
         ];
     }
 }
