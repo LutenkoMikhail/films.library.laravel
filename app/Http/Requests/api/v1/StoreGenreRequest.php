@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\api\v1;
 
+use App\Http\Traits\FailedValidationFomrRequestTrait;
 use App\Http\Traits\GenreRulesTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -10,7 +11,8 @@ use Illuminate\Http\Response;
 
 class StoreGenreRequest extends FormRequest
 {
-    use GenreRulesTrait;
+    use GenreRulesTrait,
+        FailedValidationFomrRequestTrait;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -32,8 +34,4 @@ class StoreGenreRequest extends FormRequest
         return static::$RULES;
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json(['errors' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY));
-    }
 }

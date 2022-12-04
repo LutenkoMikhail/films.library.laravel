@@ -13,7 +13,8 @@ trait FilmRulesTrait
      */
     protected static $RULES = [
         'name' => ['required', 'max:100'],
-        'poster' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        'published' => ['boolean'],
+        'poster' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        'published' => ['sometimes', 'boolean'],
+        'genre_id' => ['unique:genres,id', 'array'],
     ];
 }

@@ -1,7 +1,7 @@
 <?php
 return [
     'no_poster' => [
-        'path' => 'public/no_poster.png',
+        'path' => '/public/no_poster.png',
     ],
     'db' => [
         'paginate_films' => [

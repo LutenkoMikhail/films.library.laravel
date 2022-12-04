@@ -6,7 +6,7 @@ use App\Models\Film;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Config;
 
-class GenreFilmsResourse extends JsonResource
+class GenreFilmsResource extends JsonResource
 {
     public static $wrap = 'Genre';
 

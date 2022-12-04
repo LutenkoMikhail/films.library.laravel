@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Http\Requests\api\v1\StoreFilmRequest;
+use App\Http\Requests\api\v1\UpdateFilmRequest;
 use App\Http\Resources\api\v1\FilmResource;
 use App\Http\Traits\ModelPaginateTrait;
 use App\Http\Traits\ModelStatusCodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 
 class Film extends Model
 {
@@ -28,9 +32,13 @@ class Film extends Model
 
     public function genres()
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class)->withTimestamps();
     }
 
+    /**
+     * @param $paginate
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     static public function allFilms($paginate)
     {
 
@@ -43,11 +51,74 @@ class Film extends Model
         return $films;
     }
 
+    /**
+     * @param Film $film
+     * @return FilmResource
+     */
     static public function oneFilm(Film $film)
     {
         return new FilmResource ($film);
     }
 
+    /**
+     * @param UpdateFilmRequest $request
+     * @param Film $film
+     * @return FilmResource
+     */
+    static public function updateFilm(UpdateFilmRequest $request, Film $film)
+    {
+        if ((empty($request->poster))) {
+            $film->poster = Config::get('constants.no_poster.path');
+        } else {
+            $film->poster = '/storage/' . $request->poster->store("img");
+        }
+
+        if ($film->update($request->only('name', 'published'))) {
+            if (!empty($request->genres)) {
+                $film->genres()->detach();
+                $film->genres()->attach($request->genres);
+            } else {
+                Film::$statusCode = Response::HTTP_NOT_FOUND;;
+            }
+
+            return new FilmResource ($film);
+        }
+    }
+
+    /**
+     * @param StoreFilmRequest $request
+     * @return FilmResource
+     */
+    static public function newFilm(StoreFilmRequest $request)
+    {
+        Film::$statusCode = Response::HTTP_CREATED;
+
+        if ((empty($request->poster))) {
+            $request->poster = Config::get('constants.no_poster.path');
+        } else {
+            $request->poster = '/storage/' . $request->poster->store("img");
+        }
+
+        $film = new Film([
+            'name' => $request->name,
+            'poster' => $request->poster,
+            'published' => $request->published,
+        ]);
+
+        if (!$film->save()) {
+            Film::$statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
+        } else {
+            $film->genres()->attach($request->genres);
+        }
+
+        return new FilmResource ($film);
+    }
+
+
+    /**
+     * @param Film $film
+     * @return \Illuminate\Http\JsonResponse
+     */
     static public function destroyFilm(Film $film)
     {
         $message = 'Delete Failed';
@@ -59,6 +130,10 @@ class Film extends Model
         return response()->json(['message' => $message]);
     }
 
+    /**
+     * @param Film $film
+     * @return \Illuminate\Http\JsonResponse
+     */
     static public function publishFilm(Film $film)
     {
         $message = 'Not publish.';

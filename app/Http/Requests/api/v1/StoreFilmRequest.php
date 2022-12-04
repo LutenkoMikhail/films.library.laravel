@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests\api\v1;
 
+use App\Http\Traits\FailedValidationFomrRequestTrait;
 use App\Http\Traits\FilmRulesTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFilmRequest extends FormRequest
 {
-    use FilmRulesTrait;
+    use FilmRulesTrait,
+        FailedValidationFomrRequestTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *

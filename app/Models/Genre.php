@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Http\Requests\api\v1\StoreGenreRequest;
 use App\Http\Requests\api\v1\UpdateGenreRequest;
-use App\Http\Resources\api\v1\GenreFilmsResourse;
+use App\Http\Resources\api\v1\GenreFilmsResource;
 use App\Http\Traits\ModelPaginateTrait;
 use App\Http\Traits\ModelStatusCodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,7 +33,7 @@ class Genre extends Model
      */
     public function films()
     {
-        return $this->BelongsToMany(Film::class);
+        return $this->BelongsToMany(Film::class)->withTimestamps();
     }
 
     /**
@@ -53,7 +53,7 @@ class Genre extends Model
 
     /**
      * @param Genre $genre
-     * @return GenreFilmsResourse
+     * @return GenreFilmsResource
      */
     static public function allFilmsInGenre(Genre $genre, $paginate)
     {
@@ -62,13 +62,13 @@ class Genre extends Model
             Genre::$statusCode = Response::HTTP_NOT_FOUND;;
         }
 
-        return new GenreFilmsResourse ($genre);
+        return new GenreFilmsResource ($genre);
     }
 
     /**
      * @param UpdateGenreRequest $request
      * @param Genre $genre
-     * @return GenreFilmsResourse
+     * @return GenreFilmsResource
      */
     static public function updateGenre(UpdateGenreRequest $request, Genre $genre)
     {
@@ -77,12 +77,12 @@ class Genre extends Model
             Genre::$statusCode = Response::HTTP_NOT_FOUND;;
         }
 
-        return new GenreFilmsResourse ($genre);
+        return new GenreFilmsResource ($genre);
     }
 
     /**
      * @param StoreGenreRequest $request
-     * @return GenreFilmsResourse
+     * @return GenreFilmsResource
      */
     static public function newGenre(StoreGenreRequest $request)
     {
@@ -94,7 +94,7 @@ class Genre extends Model
             Genre::$statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
         }
 
-        return new GenreFilmsResourse ($genre);
+        return new GenreFilmsResource ($genre);
     }
 
     /**

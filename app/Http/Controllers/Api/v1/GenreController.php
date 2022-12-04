@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\api\v1\StoreGenreRequest;
 use App\Http\Requests\api\v1\UpdateGenreRequest;
 use App\Http\Resources\api\v1\GenreCollection;
-use App\Http\Resources\api\v1\GenreFilmsResourse;
+use App\Http\Resources\api\v1\GenreFilmsResource;
 use App\Http\Resources\api\v1\GenreResource;
 use App\Models\Film;
 use App\Models\Genre;
