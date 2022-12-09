@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
+use LaravelIdea\Helper\App\Models\_IH_Genre_C;
 
 class Genre extends Model
 {
@@ -49,6 +50,14 @@ class Genre extends Model
         }
 
         return $genres;
+    }
+
+    /**
+     * @return Genre|_IH_Genre_C
+     */
+    static public function fullGenres()
+    {
+        return Genre::orderBy('id')->get();
     }
 
     /**

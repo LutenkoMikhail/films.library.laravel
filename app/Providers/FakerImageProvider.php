@@ -14,7 +14,7 @@ final class FakerImageProvider extends Base
         $name = $dir . '/' . Str:: random(6) . '.jpg';
         Storage::put($name,
             file_get_contents("https://placeimg.com/$width/$height/any"));
-        return '/storage/' . $name;
+        return  $name;
     }
 }
 

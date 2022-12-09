@@ -9,6 +9,7 @@ use App\Http\Traits\ModelPaginateTrait;
 use App\Http\Traits\ModelStatusCodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -30,6 +31,9 @@ class Film extends Model
         'published',
     ];
 
+    /**
+     * @return BelongsToMany
+     */
     public function genres()
     {
         return $this->belongsToMany(Genre::class)->withTimestamps();
@@ -70,7 +74,7 @@ class Film extends Model
         if ((empty($request->poster))) {
             $film->poster = Config::get('constants.no_poster.path');
         } else {
-            $film->poster = '/storage/' . $request->poster->store("img");
+            $film->poster = $request->poster->store("img");
         }
 
         if ($film->update($request->only('name', 'published'))) {
@@ -96,13 +100,13 @@ class Film extends Model
         if ((empty($request->poster))) {
             $request->poster = Config::get('constants.no_poster.path');
         } else {
-            $request->poster = '/storage/' . $request->poster->store("img");
+            $request->poster = $request->poster->store("img");
         }
 
         $film = new Film([
             'name' => $request->name,
             'poster' => $request->poster,
-            'published' => $request->published,
+            'published' => $request->has('published') ? $request->published : false,
         ]);
 
         if (!$film->save()) {

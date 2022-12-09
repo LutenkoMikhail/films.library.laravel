@@ -1,12 +1,12 @@
 <?php
 return [
     'no_poster' => [
-        'path' => '/public/no_poster.png',
+        'path' => 'img/no_poster.png',
     ],
     'db' => [
         'paginate_films' => [
             'paginate_film_3' => 3,
-            'paginate_film_10' => 10,
+            'paginate_film_9' => 9,
             'paginate_film_25' => 25,
         ],
         'paginate_genres' => [

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Film;
+use App\Models\Genre;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Faker\Factory;
 use Faker\Generator;
@@ -35,6 +38,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        if (Schema::hasTable('films')) {
+            $countFilms = Film::get()->count();
+            view()->share('allFilms', $countFilms);
+        }
+        if (Schema::hasTable('genres')) {
+            $countGenres = Genre::get()->count();
+            view()->share('allGenres', $countGenres);
+        }
+
         /**
          * Paginate a standard Laravel Collection.
          *
