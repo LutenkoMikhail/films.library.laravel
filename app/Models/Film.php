@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 
 class Film extends Model
 {
@@ -75,7 +76,7 @@ class Film extends Model
         } else {
             $film->poster = $request->poster->store("img");
         }
-        if ($request->input( 'published')===null) {
+        if ($request->input('published') === null) {
             $request->request->add(['published' => false]);
         }
         if ($film->update($request->only('name', 'published'))) {
@@ -107,7 +108,7 @@ class Film extends Model
         $film = new Film([
             'name' => $request->name,
             'poster' => $request->poster,
-            'published' =>  false,
+            'published' => false,
         ]);
 
         if (!$film->save()) {
@@ -129,6 +130,11 @@ class Film extends Model
         $message = 'Delete Failed';
 
         if ($film->delete() > 0) {
+            if ($film->poster !== Config::get('constants.no_poster.path')) {
+                if (Storage::exists($film->poster)) {
+                    Storage::delete($film->poster);
+                }
+            }
             $message = 'Successfully Deleted';
         }
 
@@ -161,8 +167,8 @@ class Film extends Model
     /**
      * @return string Date created film
      */
-    public function dateFilm()
+    public function dateFilm($formatDate = 'd/m/Y')
     {
-        return $this->created_at->format('d/m/Y');
+        return $this->created_at->format($formatDate);
     }
 }

@@ -14,6 +14,12 @@
                 Name:{{$film->name}}
             </h1>
             <hr>
+            @if( Storage::has ($film->poster))
+                <img src="{{ Storage::url($film->poster) }}" height="60" width="60"
+                     class="card-img-top"
+                     style="max-width: 45%; margin: 0 auto; display: block;">
+            @endif
+            <hr>
             <h6>
                 Genres:
                 @if ($film->genres->count()===0)
