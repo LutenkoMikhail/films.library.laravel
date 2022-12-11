@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Http\Requests\api\v1\StoreGenreRequest;
-use App\Http\Requests\api\v1\UpdateGenreRequest;
 use App\Http\Resources\api\v1\GenreFilmsResource;
 use App\Http\Traits\ModelPaginateTrait;
 use App\Http\Traits\ModelStatusCodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Config;
 use LaravelIdea\Helper\App\Models\_IH_Genre_C;
 
 class Genre extends Model
@@ -44,7 +42,7 @@ class Genre extends Model
     static public function allGenres($paginate)
     {
         Genre::$paginate = $paginate;
-        $genres = Genre::orderBy('id')->paginate(Genre::$paginate);
+        $genres = Genre::with('films')->orderBy('id')->paginate(Genre::$paginate);
         if (count($genres) === 0) {
             Genre::$statusCode = Response::HTTP_NOT_FOUND;
         }
@@ -75,12 +73,13 @@ class Genre extends Model
     }
 
     /**
-     * @param UpdateGenreRequest $request
+     * @param FormRequest $request
      * @param Genre $genre
      * @return GenreFilmsResource
      */
-    static public function updateGenre(UpdateGenreRequest $request, Genre $genre)
+    static public function updateGenre(FormRequest $request, Genre $genre, $paginate)
     {
+        Film::$paginate = $paginate;
         $genre->name = $request->name;
         if (!$genre->save()) {
             Genre::$statusCode = Response::HTTP_NOT_FOUND;;
@@ -90,11 +89,12 @@ class Genre extends Model
     }
 
     /**
-     * @param StoreGenreRequest $request
+     * @param FormRequest $request
      * @return GenreFilmsResource
      */
-    static public function newGenre(StoreGenreRequest $request)
+    static public function newGenre(FormRequest $request, $paginate)
     {
+        Film::$paginate = $paginate;
         Genre::$statusCode = Response::HTTP_CREATED;
         $genre = new Genre([
             'name' => $request->name,
@@ -121,5 +121,17 @@ class Genre extends Model
         }
 
         return response()->json(['message' => $message]);
+    }
+
+    /**
+     * @return bool Film destroy
+     */
+    public function isDestroy()
+    {
+        if ($this->films->count() === 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

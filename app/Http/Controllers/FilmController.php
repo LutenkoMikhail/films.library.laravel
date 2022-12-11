@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\api\v1\StoreFilmRequest;
-use App\Http\Requests\api\v1\UpdateFilmRequest;
+use App\Http\Requests\StoreFilmRequestWeb;
+use App\Http\Requests\UpdateFilmRequestWeb;
 use App\Models\Film;
 use App\Models\Genre;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
 class FilmController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +23,7 @@ class FilmController extends Controller
     public function index()
     {
         return view('index', [
-            'films' =>Film::allFilms(Config::get('constants.db.paginate_films.paginate_film_3'))
+            'films' => Film::allFilms(Config::get('constants.db.paginate_films.paginate_film_3'))
         ]);
     }
 
@@ -44,10 +43,10 @@ class FilmController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreFilmRequest $request
+     * @param StoreFilmRequestWeb $request
      * @return RedirectResponse
      */
-    public function store(StoreFilmRequest $request)
+    public function store(StoreFilmRequestWeb $request)
     {
         Film::newFilm($request)->response();
         return redirect()->route('films.index');
@@ -56,19 +55,21 @@ class FilmController extends Controller
 
     /**
      *  Display the specified resource.
+     *
      * @param Film $film
      * @return Application|Factory|View
      */
     public function show(Film $film)
     {
-        return view('films.view', [
-            'film' =>Film::oneFilm($film)
+        return view('films.show', [
+            'film' => Film::oneFilm($film)
         ]);
     }
 
 
     /**
      * Show the form for editing the specified resource.
+     *
      * @param Film $film
      * @return Application|Factory|View
      */
@@ -85,11 +86,12 @@ class FilmController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @param UpdateFilmRequest $request
+     *
+     * @param UpdateFilmRequestWeb $request
      * @param Film $film
      * @return RedirectResponse
      */
-    public function update(UpdateFilmRequest $request, Film $film)
+    public function update(UpdateFilmRequestWeb $request, Film $film)
     {
         Film::updateFilm($request, $film)->response();
 
@@ -99,12 +101,27 @@ class FilmController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
      * @param Film $film
      * @return RedirectResponse
      */
     public function destroy(Film $film)
     {
         Film::destroyFilm($film);
+
+        return redirect()->route('films.index');
+    }
+
+
+    /**
+     * Publishing a resource
+     *
+     * @param Film $film
+     * @return RedirectResponse
+     */
+    public function publish(Film $film)
+    {
+        Film::publishFilm($film);
 
         return redirect()->route('films.index');
     }

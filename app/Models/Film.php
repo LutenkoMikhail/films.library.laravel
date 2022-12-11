@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use App\Http\Requests\api\v1\StoreFilmRequest;
-use App\Http\Requests\api\v1\UpdateFilmRequest;
 use App\Http\Resources\api\v1\FilmResource;
 use App\Http\Traits\ModelPaginateTrait;
 use App\Http\Traits\ModelStatusCodeTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
 
 class Film extends Model
 {
@@ -65,18 +63,21 @@ class Film extends Model
     }
 
     /**
-     * @param UpdateFilmRequest $request
+     * @param FormRequest $request
      * @param Film $film
      * @return FilmResource
      */
-    static public function updateFilm(UpdateFilmRequest $request, Film $film)
+    static public function updateFilm(FormRequest $request, Film $film)
     {
+
         if ((empty($request->poster))) {
             $film->poster = Config::get('constants.no_poster.path');
         } else {
             $film->poster = $request->poster->store("img");
         }
-
+        if ($request->input( 'published')===null) {
+            $request->request->add(['published' => false]);
+        }
         if ($film->update($request->only('name', 'published'))) {
             if (!empty($request->genres)) {
                 $film->genres()->detach();
@@ -90,10 +91,10 @@ class Film extends Model
     }
 
     /**
-     * @param StoreFilmRequest $request
+     * @param FormRequest $request
      * @return FilmResource
      */
-    static public function newFilm(StoreFilmRequest $request)
+    static public function newFilm(FormRequest $request)
     {
         Film::$statusCode = Response::HTTP_CREATED;
 
@@ -106,7 +107,7 @@ class Film extends Model
         $film = new Film([
             'name' => $request->name,
             'poster' => $request->poster,
-            'published' => $request->has('published') ? $request->published : false,
+            'published' =>  false,
         ]);
 
         if (!$film->save()) {
@@ -147,5 +148,21 @@ class Film extends Model
         }
 
         return response()->json(['message' => $message]);
+    }
+
+    /**
+     * @return string TRUE or FALSE
+     */
+    public function filmPublication()
+    {
+        return $this->published ? 'true' : 'false';
+    }
+
+    /**
+     * @return string Date created film
+     */
+    public function dateFilm()
+    {
+        return $this->created_at->format('d/m/Y');
     }
 }

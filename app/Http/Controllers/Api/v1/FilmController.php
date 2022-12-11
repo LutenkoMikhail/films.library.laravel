@@ -7,15 +7,16 @@ use App\Http\Requests\api\v1\StoreFilmRequest;
 use App\Http\Requests\api\v1\UpdateFilmRequest;
 use App\Http\Resources\api\v1\FilmCollection;
 use App\Models\Film;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
 
 class FilmController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index()
     {
@@ -29,8 +30,8 @@ class FilmController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param StoreFilmRequest $request
+     * @return JsonResponse
      */
     public function store(StoreFilmRequest $request)
     {
@@ -38,11 +39,12 @@ class FilmController extends Controller
             ->setStatusCode(Film::$statusCode);
     }
 
+
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Film $film
-     * @return \Illuminate\Http\Response
+     * @param Film $film
+     * @return JsonResponse
      */
     public function show(Film $film)
     {
@@ -55,9 +57,9 @@ class FilmController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Film $film
-     * @return \Illuminate\Http\Response
+     * @param UpdateFilmRequest $request
+     * @param Film $film
+     * @return JsonResponse
      */
     public function update(UpdateFilmRequest $request, Film $film)
     {
@@ -65,17 +67,24 @@ class FilmController extends Controller
             ->setStatusCode(Film::$statusCode);
     }
 
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Film $film
-     * @return \Illuminate\Http\Response
+     * @param Film $film
+     * @return JsonResponse
      */
     public function destroy(Film $film)
     {
         return Film::destroyFilm($film);
     }
 
+    /**
+     * Publishing a resource
+     *
+     * @param Film $film
+     * @return JsonResponse
+     */
     public function publish(Film $film)
     {
         return Film::publishFilm($film);

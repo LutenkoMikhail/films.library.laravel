@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreGenreRequestWeb;
+use App\Http\Requests\UpdateGenreRequestWeb;
+use App\Models\Genre;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
 
 class GenreController extends Controller
 {
@@ -16,72 +20,93 @@ class GenreController extends Controller
      */
     public function index()
     {
-        //
+        return view('genres.index', [
+            'genres' => Genre::allGenres(Config::get('constants.db.paginate_genres.paginate_genre_3'))
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function create()
     {
-        //
+        return view('genres.create');
     }
 
+
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreGenreRequestWeb $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreGenreRequestWeb $request)
     {
-        //
+        Genre::newGenre($request, Config::get('constants.db.paginate_genres.paginate_genre_3'))->response();
+
+        return redirect()->route('genres.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Application|Factory|View
      */
-    public function show($id)
+    public function show(Genre $genre)
     {
-        //
+        return view('genres.show', [
+            'genre' => $genre,
+            'films' => $genre->films()->get()->paginate(Config::get('constants.db.paginate_films.paginate_film_3')),
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Genre $genre
+     * @return Application|Factory|View
      */
-    public function edit($id)
+    public function edit(Genre $genre)
     {
-        //
+        return view('genres.edit',
+            [
+                'genre' => $genre,
+            ]
+        );
     }
 
+
     /**
+     *
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateGenreRequestWeb $request
+     * @param Genre $genre
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(UpdateGenreRequestWeb $request, Genre $genre)
     {
-        //
+        Genre::updateGenre($request, $genre, Config::get('constants.db.paginate_films.paginate_film_3'))->response();
+
+        return redirect()->route('genres.index');
     }
+
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Genre $genre
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Genre $genre)
     {
-        //
+        Genre::destroyGenre($genre);
+
+        return redirect()->route('genres.index');
     }
 }

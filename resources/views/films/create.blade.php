@@ -36,23 +36,6 @@
         </div>
 
         <div class="form-group row">
-            <label for="in_stock" class="col-md-4 col-form-label text-md-right">{{ __('Published') }}</label>
-            <div class="col-md-6">
-                <p>
-                    <input id="published" type="checkbox"
-                           class="form-control @error('published') is-invalid @enderror"
-                           name="published" checked value="1"
-                    >
-                </p>
-                @error('published')
-                <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                @enderror
-            </div>
-
-        </div>
-        <div class="form-group row">
             <label for="selectgenres" class="col-md-4 col-form-label text-md-right">{{ __('Genres') }}</label>
             <select id="selectgenres" name="genres[ ]" multiple="multiple" size="10" required>
                 @foreach($genres as $genre)

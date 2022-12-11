@@ -13,6 +13,7 @@ Route::resource('films', FilmController::class)
     ->missing(function (Request $request) {
         return Redirect::route('films.index');
     });
+Route::post('films/{film}/publish', [FilmController::class, 'publish'])->name('films.publication');
 
 Route::resource('genres', GenreController::class)
     ->missing(function (Request $request) {

@@ -1,5 +1,5 @@
 @extends('master')
-@section('title','View Films')
+@section('title','View Film')
 @section('content')
 
     <div class="text-center">
@@ -32,9 +32,7 @@
                     Published : {{$film->published  ? 'true' : 'false'}}
                 @endif
             </h6>
-
             <hr>
-
         </div>
         <div class="center">
             @include('films.button.back')
